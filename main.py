@@ -8,6 +8,8 @@ class colors:
     black = (0,0,0)
     purple = (135,90,255)
 backgroundColor = colors.white
+pg.font.init()
+myfont = pg.font.SysFont('Comic Sans MS', 10)
 
 # Resolution
 GAME_RESOLUTION = (240,160)
@@ -42,7 +44,7 @@ class Player:
         self.img = playerImg_right
         self.rect = self.img.get_rect()
         self.rect.x, self.rect.y = self.pos
-        self.collect = {'purple_potion':False}
+        self.collect = {'coin':0,'purple_potion':False}
 
     def checkCollision(self):
         for tile in map.tiles:
@@ -55,7 +57,12 @@ class Player:
                 if obj.solid:
                     return True
                 if obj.collectable:
-                    self.collect[obj.id] = True
+                    if obj.id == 'coin':
+                        if obj.display:
+                            self.collect['coin'] += 1
+                    else:
+                        self.collect[obj.id] = True
+                    obj.display = False
             
 
     def move(self):
@@ -89,14 +96,12 @@ def playerControl():
     keys = pg.key.get_pressed()
     player.vel = (0,0)
     # Move player, change sprite based on direction
-    #if not (keys[pg.K_UP] or keys[pg.K_DOWN]):
     if keys[pg.K_LEFT]:
         player.vel = (-player.speed,0)
         player.img = playerImg_left
     if keys[pg.K_RIGHT]:
         player.vel = (player.speed,0)
         player.img = playerImg_right
-    #if not (keys[pg.K_LEFT] or keys[pg.K_RIGHT]):
     if keys[pg.K_UP]:
         player.vel = (0,-player.speed)
         player.img = playerImg_up
@@ -106,13 +111,16 @@ def playerControl():
     player.move()
 
 def keyPress(e):
-    global backgroundColor, crateImg, debug
+    global backgroundColor, crateImg, debug, player, map
     if e.key == pg.K_1:
         backgroundColor = colors.white
     if e.key == pg.K_2 and player.collect['purple_potion']:
         backgroundColor = colors.purple
     if e.key == pg.K_0:
         debug = not debug
+    if e.key == pg.K_r:
+        map = TileMap('assets/maps/testmap.csv')
+        player=Player()
 
 def draw():
     global screen
@@ -125,7 +133,7 @@ def draw():
     # objects
     for obj in map.objects:
         if obj.collectable:
-            if player.collect[obj.id]:
+            if not obj.display:
                 continue
         obj.draw(screen)
 
@@ -137,6 +145,10 @@ def draw():
     pg.draw.rect(screen, colors.white, (20,20,8,8), 0)
     if player.collect['purple_potion']:
         pg.draw.rect(screen, colors.purple, (28,20,8,8), 0)
+    # coin text
+    textsurface = myfont.render(f'{player.collect["coin"]} Coins', False, (0, 0, 0))
+    screen.blit(textsurface,(20,28))
+
     
     # debug
     if debug:

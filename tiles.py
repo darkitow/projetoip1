@@ -10,6 +10,7 @@ class Tile:
         self.collectable = collectable
         self.id = id
         self.color = color
+        self.display = True
 
     def draw(self, surf):
         surf.blit(self.image,(self.rect.x,self.rect.y))
@@ -43,21 +44,21 @@ class TileMap:
                 if tile == '0':
                     self.start_x, self.start_y = x*self.tile_size,y*self.tile_size
                 if tile == '4':
-                    tiles.append(Tile('assets/walltl.png',x*self.tile_size,y*self.tile_size))
+                    tiles.append(Tile('assets/tiles/walltl.png',x*self.tile_size,y*self.tile_size))
                 if tile == '5':
-                    tiles.append(Tile('assets/wallt.png',x*self.tile_size,y*self.tile_size))
+                    tiles.append(Tile('assets/tiles/wallt.png',x*self.tile_size,y*self.tile_size))
                 if tile == '6':
-                    tiles.append(Tile('assets/walltr.png',x*self.tile_size,y*self.tile_size))
+                    tiles.append(Tile('assets/tiles/walltr.png',x*self.tile_size,y*self.tile_size))
                 if tile == '14':
-                    tiles.append(Tile('assets/walll.png',x*self.tile_size,y*self.tile_size))
+                    tiles.append(Tile('assets/tiles/walll.png',x*self.tile_size,y*self.tile_size))
                 if tile == '24':
-                    tiles.append(Tile('assets/wallbl.png',x*self.tile_size,y*self.tile_size))
+                    tiles.append(Tile('assets/tiles/wallbl.png',x*self.tile_size,y*self.tile_size))
                 if tile == '25':
-                    tiles.append(Tile('assets/wallb.png',x*self.tile_size,y*self.tile_size))
+                    tiles.append(Tile('assets/tiles/wallb.png',x*self.tile_size,y*self.tile_size))
                 if tile == '16':
-                    tiles.append(Tile('assets/wallr.png',x*self.tile_size,y*self.tile_size))
+                    tiles.append(Tile('assets/tiles/wallr.png',x*self.tile_size,y*self.tile_size))
                 if tile == '26':
-                    tiles.append(Tile('assets/wallbr.png',x*self.tile_size,y*self.tile_size))
+                    tiles.append(Tile('assets/tiles/wallbr.png',x*self.tile_size,y*self.tile_size))
                 if tile == '7':
                     objects.append(Tile('assets/crate.png',x*self.tile_size,y*self.tile_size,solid=True))
                 if tile == '8':
