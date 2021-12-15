@@ -2,6 +2,8 @@ import pygame as pg
 from tiles import *
 debug = False
 
+# added test comment
+
 # Colors
 class colors:
     white = (255,255,255)
