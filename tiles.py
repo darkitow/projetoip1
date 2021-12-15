@@ -10,7 +10,6 @@ class Tile:
         self.collectable = collectable
         self.id = id
         self.color = color
-        self.display = True
 
     def draw(self, surf):
         surf.blit(self.image,(self.rect.x,self.rect.y))

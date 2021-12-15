@@ -27,10 +27,12 @@ icon = pg.image.load('icon.png')
 pg.display.set_icon(icon)
 
 # Player Sprites
-playerImg_left = pg.image.load('assets/player/player-left.png')
-playerImg_right = pg.image.load('assets/player/player-right.png')
-playerImg_down = pg.image.load('assets/player/player-down.png')
-playerImg_up = pg.image.load('assets/player/player-up.png')
+playerImg = {
+    'left': pg.image.load('assets/player/player-left.png').convert_alpha(),
+    'right':pg.image.load('assets/player/player-right.png').convert_alpha(),
+    'down': pg.image.load('assets/player/player-down.png').convert_alpha(),
+    'up': pg.image.load('assets/player/player-up.png').convert_alpha(),
+}
 
 # Map
 map = TileMap('assets/maps/testmap.csv')
@@ -40,8 +42,8 @@ class Player:
     def __init__(self):
         self.pos = [map.start_x,map.start_y]
         self.vel = [0,0]
-        self.speed = 1.8
-        self.img = playerImg_right
+        self.speed = 1
+        self.img = playerImg['right']
         self.rect = self.img.get_rect()
         self.rect.x, self.rect.y = self.pos
         self.collect = {'coin':0,'purple_potion':False}
@@ -58,11 +60,10 @@ class Player:
                     return True
                 if obj.collectable:
                     if obj.id == 'coin':
-                        if obj.display:
-                            self.collect['coin'] += 1
+                        self.collect['coin'] += 1
                     else:
                         self.collect[obj.id] = True
-                    obj.display = False
+                    map.objects.remove(obj)
             
 
     def move(self):
@@ -98,20 +99,20 @@ def playerControl():
     # Move player, change sprite based on direction
     if keys[pg.K_LEFT]:
         player.vel = (-player.speed,0)
-        player.img = playerImg_left
+        player.img = playerImg['left']
     if keys[pg.K_RIGHT]:
         player.vel = (player.speed,0)
-        player.img = playerImg_right
+        player.img = playerImg['right']
     if keys[pg.K_UP]:
         player.vel = (0,-player.speed)
-        player.img = playerImg_up
+        player.img = playerImg['up']
     if keys[pg.K_DOWN]:
         player.vel = (0,player.speed)
-        player.img = playerImg_down
+        player.img = playerImg['down']
     player.move()
 
 def keyPress(e):
-    global backgroundColor, crateImg, debug, player, map
+    global backgroundColor, crateImg, debug, player, map, run
     if e.key == pg.K_1:
         backgroundColor = colors.white
     if e.key == pg.K_2 and player.collect['purple_potion']:
@@ -121,6 +122,8 @@ def keyPress(e):
     if e.key == pg.K_r:
         map = TileMap('assets/maps/testmap.csv')
         player=Player()
+    if e.key == pg.K_ESCAPE:
+        run = False
 
 def draw():
     global screen
@@ -132,9 +135,6 @@ def draw():
 
     # objects
     for obj in map.objects:
-        if obj.collectable:
-            if not obj.display:
-                continue
         obj.draw(screen)
 
     # player
@@ -172,4 +172,4 @@ while run:
     draw()
 
     pg.display.update()
-    clock.tick(30)
+    clock.tick(60)
