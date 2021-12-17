@@ -1,20 +1,16 @@
-from typing import Tuple
 import pygame as pg
 import os, csv
+from config import *
+
+pg.init()
+window = pg.display.set_mode(WINDOW_RESOLUTION)
 
 def changeColor(image, color):
     colouredImage = pg.Surface(image.get_size())
     colouredImage.fill(color)
-
     finalImage = image.copy()
     finalImage.blit(colouredImage, (0, 0), special_flags=pg.BLEND_MIN)
     return finalImage
-
-hue = {
-    0:(0,0,0),
-    1:(91,206,250),
-    2:(245,169,184),
-}
 
 class Tile:
     def __init__(self,image,x,y,solid=False,collectable=False,id=None,color_id= None):  # novo parametro color_id
@@ -24,7 +20,6 @@ class Tile:
         self.color = None
         if color_id != None:
             self.color = hue[color_id]
-            print(self.color)
             self.color_value = pg.Color(hue[color_id])
             self.image = changeColor(self.image, self.color_value)
         self.rect = self.image.get_rect()
@@ -89,9 +84,9 @@ class TileMap:
                 if tile == '102': 
                     objects.append(Tile('assets/crate.png',x*self.tile_size,y*self.tile_size,solid=True, color_id = 2))
                 if tile == '201':
-                    objects.append(Tile('assets/potion.png',x*self.tile_size,y*self.tile_size,collectable=True,id='purple_potion', color_id = 1))
+                    objects.append(Tile('assets/potion.png',x*self.tile_size,y*self.tile_size,collectable=True,id='potion1', color_id = 1))
                 if tile == '202': 
-                    objects.append(Tile('assets/potion.png',x*self.tile_size,y*self.tile_size,collectable=True,id='test_potion', color_id = 2))
+                    objects.append(Tile('assets/potion.png',x*self.tile_size,y*self.tile_size,collectable=True,id='potion2', color_id = 2))
                 
                 x += 1
             y += 1
