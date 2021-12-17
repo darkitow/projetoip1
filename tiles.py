@@ -1,8 +1,7 @@
 from typing import Tuple
 import pygame as pg
 import os, csv
-# \\\\\\\\\\\\\\\\\\\\\\\\\\
-#Função que muda a cor de um bloco(tbm funciona com poçoes)
+
 def changeColor(image, color):
     colouredImage = pg.Surface(image.get_size())
     colouredImage.fill(color)
@@ -11,36 +10,31 @@ def changeColor(image, color):
     finalImage.blit(colouredImage, (0, 0), special_flags=pg.BLEND_MIN)
     return finalImage
 
-# dicionario com cores pra mudar
 hue = {
-    1:(135,90,255),
-    2:(100,50,100) # cor teste
+    0:(0,0,0),
+    1:(91,206,250),
+    2:(245,169,184),
 }
-# \\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 class Tile:
-    def __init__(self,image,x,y,solid=False,collectable=False,id=None,color = None, color_id= None):  # novo parametro color_id
-        # \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    def __init__(self,image,x,y,solid=False,collectable=False,id=None,color_id= None):  # novo parametro color_id
+        self.image = pg.image.load(image).convert_alpha()
         # color_id : posicao da cor no dicionario hue
         # caso seja um bloco colorido
+        self.color = None
         if color_id != None:
-            self.color_value =  pg.Color(hue[color_id])
-            self.image = changeColor(pg.image.load(image).convert_alpha(), self.color_value)
-        # outro bloco
-        else:
-            self.image = pg.image.load(image).convert_alpha()
-        # \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+            self.color = hue[color_id]
+            print(self.color)
+            self.color_value = pg.Color(hue[color_id])
+            self.image = changeColor(self.image, self.color_value)
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = x,y
         self.solid = solid
         self.collectable = collectable
         self.id = id
-        self.color = color
-        
 
     def draw(self, surf):
         surf.blit(self.image,(self.rect.x,self.rect.y))
-        #pg.draw.rect(surf, (255,0,0), self.rect, 1)
 
 class TileMap:
     def __init__(self, filename):
@@ -85,23 +79,20 @@ class TileMap:
                     tiles.append(Tile('assets/tiles/wallr.png',x*self.tile_size,y*self.tile_size))
                 if tile == '26':
                     tiles.append(Tile('assets/tiles/wallbr.png',x*self.tile_size,y*self.tile_size))
-                if tile == '7':
-                    objects.append(Tile('assets/crate.png',x*self.tile_size,y*self.tile_size,solid=True))
-                # \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-                # tiles abaixo possuem o atributo color_id para modificar sua cor
-                if tile == '8':
-                    objects.append(Tile('assets/crate_purple.png',x*self.tile_size,y*self.tile_size,solid=True,color = (135,90,255), color_id = 1))
-                # bloco teste
-                if tile == '999': 
-                    objects.append(Tile('assets/crate_purple.png',x*self.tile_size,y*self.tile_size,solid=True,color = (100,50,100), color_id = 2))
-                # poção teste
-                if tile == '998': 
-                    objects.append(Tile('assets/potion.png',x*self.tile_size,y*self.tile_size,collectable=True,id='test_potion', color_id = 2))
-                if tile == '17':
-                    objects.append(Tile('assets/potion.png',x*self.tile_size,y*self.tile_size,collectable=True,id='purple_potion', color_id = 1))
-                # \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
                 if tile == '10':
                     objects.append(Tile('assets/coin.png',x*self.tile_size,y*self.tile_size,collectable=True,id='coin'))
+                if tile == '100':
+                    objects.append(Tile('assets/crate.png',x*self.tile_size,y*self.tile_size,solid=True, color_id=0))
+                # tiles abaixo possuem o atributo color_id para modificar sua cor
+                if tile == '101':
+                    objects.append(Tile('assets/crate.png',x*self.tile_size,y*self.tile_size,solid=True, color_id = 1))
+                if tile == '102': 
+                    objects.append(Tile('assets/crate.png',x*self.tile_size,y*self.tile_size,solid=True, color_id = 2))
+                if tile == '201':
+                    objects.append(Tile('assets/potion.png',x*self.tile_size,y*self.tile_size,collectable=True,id='purple_potion', color_id = 1))
+                if tile == '202': 
+                    objects.append(Tile('assets/potion.png',x*self.tile_size,y*self.tile_size,collectable=True,id='test_potion', color_id = 2))
+                
                 x += 1
             y += 1
         self.map_w, self.map_h = x*self.tile_size,y*self.tile_size

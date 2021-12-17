@@ -6,10 +6,9 @@ debug = False
 class colors:
     white = (255,255,255)
     black = (0,0,0)
-    purple = (135,90,255)
-    # \\\\\\\\
-    color_test = (100,50,100) # adcionei a cor do background teste
-    # \\\\\\\\\
+    purple = (91,206,250)
+    color_test = (245,169,184)
+
 backgroundColor = colors.white
 pg.font.init()
 myfont = pg.font.SysFont('Comic Sans MS', 10)
@@ -49,9 +48,7 @@ class Player:
         self.img = playerImg['right']
         self.rect = self.img.get_rect()
         self.rect.x, self.rect.y = self.pos
-        # \\\\\\\\\
-        self.collect = {'coin':0,'purple_potion':False, 'test_potion': False} # adcionei a poção teste
-        # \\\\\\\\\
+        self.collect = {'coin':0,'purple_potion':False, 'test_potion': False}
     def checkCollision(self):
         for tile in map.tiles:
             if self.rect.colliderect(tile.rect):
@@ -121,11 +118,8 @@ def keyPress(e):
         backgroundColor = colors.white
     if e.key == pg.K_2 and player.collect['purple_potion']:
         backgroundColor = colors.purple
-    # \\\\\\\\\\
-    # adcionei a tecla 3 para a poção teste
     if e.key == pg.K_3 and player.collect['test_potion']:
         backgroundColor = colors.color_test
-    # \\\\\\\\\\
     if e.key == pg.K_0:
         debug = not debug
     if e.key == pg.K_r:
@@ -150,15 +144,12 @@ def draw():
     drawPlayer()
 
     # overlay
-    pg.draw.rect(screen, colors.black, (19,19,27,10), 0)
+    pg.draw.rect(screen, colors.black, (19,19,28,10), 0)
     pg.draw.rect(screen, colors.white, (20,20,8,8), 0)
     if player.collect['purple_potion']:
-        pg.draw.rect(screen, colors.purple, (28,20,8,8), 0)
-    # \\\\\\\\\\\
-    # desenhei a poção teste
+        pg.draw.rect(screen, colors.purple, (29,20,8,8), 0)
     if player.collect['test_potion']:
-        pg.draw.rect(screen, colors.color_test, (37,20,8,8), 0) # precisa mudar os numeros por que ainda ta meio torto
-    # \\\\\\\\\\\\
+        pg.draw.rect(screen, colors.color_test, (38,20,8,8), 0)
     # coin text
     textsurface = myfont.render(f'{player.collect["coin"]} Coins', False, (0, 0, 0))
     screen.blit(textsurface,(20,28))
