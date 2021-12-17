@@ -15,18 +15,48 @@ class Player:
         self.pos = [map.start_x,map.start_y]
         self.vel = [0,0]
         self.speed = 1
-        self.playerImg = {
-            'left': pg.image.load('assets/player/player-left.png').convert_alpha(),
-            'right':pg.image.load('assets/player/player-right.png').convert_alpha(),
-            'down': pg.image.load('assets/player/player-down.png').convert_alpha(),
-            'up': pg.image.load('assets/player/player-up.png').convert_alpha(),
-        }
-        self.img = self.playerImg['right']
-        self.rect = self.img.get_rect()
-        self.rect.x, self.rect.y = self.pos
+        
         self.collect = {'coin':0,'potion1':False, 'potion2': False}
         self.game = game
-    
+        
+        self.sprites = {
+            'left':[
+                'assets/player/player-left1.png',
+                'assets/player/player-left2.png',
+                'assets/player/player-left3.png',
+                'assets/player/player-left4.png',
+            ],
+            'right':[
+                'assets/player/player-right1.png',
+                'assets/player/player-right2.png',
+                'assets/player/player-right3.png',
+                'assets/player/player-right4.png',
+            ],
+            'up':[
+                'assets/player/player-up1.png',
+                'assets/player/player-up2.png',
+                'assets/player/player-up3.png',
+                'assets/player/player-up4.png',
+            ],
+            'down':[
+                'assets/player/player-down1.png',
+                'assets/player/player-down2.png',
+                'assets/player/player-down3.png',
+                'assets/player/player-down4.png',
+            ],
+        }
+        self.loadSprites()
+        self.img = self.sprites['right'][0]
+        self.aniFrame = 0
+
+        self.rect = self.img.get_rect()
+        self.rect.x, self.rect.y = self.pos
+
+    def loadSprites(self):
+        for cod, frames in self.sprites.items():
+            for i, sprite in enumerate(frames):
+                self.sprites[cod][i] = pg.image.load(sprite).convert_alpha()
+
     def checkCollision(self):
         for tile in map.tiles:
             if self.rect.colliderect(tile.rect):
@@ -43,7 +73,28 @@ class Player:
                     else:
                         self.collect[obj.id] = True
                     map.objects.remove(obj)
-            
+
+    def animation(self):
+        # reset animation when stopping
+        if self.vel == (0,0):
+            self.aniFrame = 0
+        #left
+        if self.vel[0] < 0:
+            self.img = self.sprites['left'][int(self.aniFrame)]
+        # right
+        if self.vel[0] > 0:
+            self.img = self.sprites['right'][int(self.aniFrame)]
+        # up
+        if self.vel[1] < 0:
+            self.img = self.sprites['up'][int(self.aniFrame)]
+        # down
+        if self.vel[1] > 0:
+            self.img = self.sprites['down'][int(self.aniFrame)]
+        
+        self.aniFrame += 4/60
+        if self.aniFrame > 3:
+            self.aniFrame = 0
+
     def move(self):
         self.pos[0] += self.vel[0]
         self.pos[1] += self.vel[1]
@@ -54,6 +105,8 @@ class Player:
         if self.checkCollision():
             self.pos[0] -= self.vel[0]
             self.pos[1] -= self.vel[1]
+        
+        self.animation()
 
 # Game Loop
 class Game:
@@ -81,18 +134,15 @@ class Game:
         # Move player, change sprite based on direction
         if keys[pg.K_LEFT]:
             self.player.vel = (-self.player.speed,0)
-            self.player.img = self.player.playerImg['left']
         if keys[pg.K_RIGHT]:
             self.player.vel = (self.player.speed,0)
-            self.player.img = self.player.playerImg['right']
         if keys[pg.K_UP]:
             self.player.vel = (0,-self.player.speed)
-            self.player.img = self.player.playerImg['up']
         if keys[pg.K_DOWN]:
             self.player.vel = (0,self.player.speed)
-            self.player.img = self.player.playerImg['down']
 
     def keyPress(self,e):
+        global map
         if e.key == pg.K_1:
             self.bgColor = colors.white
         if e.key == pg.K_2 and self.player.collect['potion1']:
@@ -102,8 +152,8 @@ class Game:
         if e.key == pg.K_0:
             self.debug = not self.debug
         if e.key == pg.K_r:
-            self.map = TileMap('assets/maps/testmap.csv')
-            self.player=Player()
+            map = TileMap('assets/maps/testmap.csv')
+            self.player = Player(self)
         if e.key == pg.K_ESCAPE:
             self.playing = False
 
