@@ -17,6 +17,8 @@ while run:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             run = False
-
+        if event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE:
+            run = False
+    
     game.inGame()
     pg.display.update()
