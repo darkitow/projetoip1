@@ -10,6 +10,14 @@ myfont = pg.font.SysFont('Comic Sans MS', 10)
 
 WIN = pygame.USEREVENT + 1
 
+atual = 1
+
+levels = {
+    1:"assets\maps\map1.csv",
+    2:"assets\maps\map2.csv"
+}
+
+
 # Player
 class Player:
     def __init__(self, game):
@@ -127,10 +135,12 @@ class Game:
         self.main_menu = MainMenu(self)
         self.options = OptionsMenu(self)
         self.credits = CreditsMenu(self)
+        self.endmenu = EndMenu(self)
         self.curr_menu = self.main_menu
 
         self.clock = pg.time.Clock()
         self.bgColor = colors.white
+
 
     def victory(self):
         count = 0
@@ -205,9 +215,8 @@ class Game:
         self.screen = pg.transform.scale(self.screen, (900, 600))
         self.window.blit(self.screen, (0, 0))
 
-    def inGame(self,map_file):
-        self.map_file = map_file
-        self.map = TileMap(self.map_file)
+    def inGame(self):
+        self.map = TileMap(levels[1])
         self.player = Player(self)
 
         while self.playing:
@@ -216,6 +225,15 @@ class Game:
                     self.running, self.playing = False, False
                 if event.type == pg.KEYDOWN:
                     self.keyPress(event)
+                if event.type == WIN:
+                    global atual
+                    atual += 1
+                    if atual > 2:
+                        self.curr_menu = self.endmenu
+                        self.playing = False
+                    else:
+                        self.map= TileMap(levels[atual])
+                        self.player = Player(self)
 
             self.drawGame()
             self.playerControl()

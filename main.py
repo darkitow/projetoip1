@@ -5,6 +5,6 @@ game_main = gm.Game()
 
 while game_main.running:
     game_main.curr_menu.display_menu()
-    game_main.inGame('assets/maps/map1.csv')
+    game_main.inGame()
 
 pg.quit()
