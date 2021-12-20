@@ -8,12 +8,12 @@ bg_image = pygame.transform.scale(pygame.image.load(
 bg_image_2 = pygame.transform.scale(pygame.image.load(
     os.path.join("assets", "background_menu", "SpectreV.png")), (900, 600))
 
-bg_music = pygame.mixer.Sound(os.path.join("assets", "musicadefundo.mpeg"))
+bg_music = pygame.mixer.Sound(os.path.join("assets","musicas", "musicadefundo.mp3"))
+victory_music = pygame.mixer.Sound(os.path.join("assets","musicas", "musicavitoria.mp3"))
 
+bg_music.play(-1)
 
 class Menu:
-    bg_music.play()
-
     def __init__(self, game):
         self.game = game
         self.mid_w, self.mid_h = self.game.DISPLAY_W / 2, self.game.DISPLAY_H / 2
@@ -157,5 +157,21 @@ class CreditsMenu(Menu):
             self.game.draw_text("Vitor de Almeida Ferreira (vaf)", 25, self.game.DISPLAY_W / 2, self.game.DISPLAY_H / 2 + 160)
             self.game.draw_text("Voltar: Backspace", 10, self.mid_w - 200, self.mid_h + 250)
             self.game.draw_text("Avançar: Enter", 10, self.mid_w + 200, self.mid_h + 250)
+            self.blit_screen()
+
+class EndMenu(Menu):
+    def __init__(self, game):
+        Menu.__init__(self, game)
+
+    def display_menu(self):
+        self.run_display = True
+        while self.run_display:
+            self.game.check_events()
+            if self.game.START_KEY or self.game.BACK_KEY:
+                self.game.curr_menu = self.game.main_menu
+                self.run_display = False
+            self.game.display.blit(bg_image_2, (0, 0))
+            self.game.draw_text("obrigado", 40, self.game.DISPLAY_W / 2, self.game.DISPLAY_H / 2)
+            self.game.draw_text("aperte backpspace para ir ao menu inicial", 20, self.game.DISPLAY_W / 2, self.game.DISPLAY_H / 2 + 60)
             self.blit_screen()
 
