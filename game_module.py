@@ -8,21 +8,17 @@ debug = False
 pg.font.init()
 myfont = pg.font.SysFont('Comic Sans MS', 10)
 
-# Map
-map = TileMap('assets/maps/testmap.csv')
-
-
 WIN = pygame.USEREVENT + 1
 
 # Player
 class Player:
     def __init__(self, game):
-        self.pos = [map.start_x, map.start_y]
+        self.game = game
+        self.pos = [self.game.map.start_x, self.game.map.start_y]
         self.vel = [0, 0]
         self.speed = 1
 
         self.collect = {'coin': 0, 'potion1': False, 'potion2': False}
-        self.game = game
 
         self.sprites = {
             'left': [
@@ -63,10 +59,10 @@ class Player:
                 self.sprites[cod][i] = pg.image.load(sprite).convert_alpha()
 
     def checkcollision(self):
-        for tile in map.tiles:
+        for tile in self.game.map.tiles:
             if self.rect.colliderect(tile.rect):
                 return True
-        for obj in map.objects:
+        for obj in self.game.map.objects:
             if self.rect.colliderect(obj.rect):
                 if obj.color == self.game.bgColor:
                     continue
@@ -77,7 +73,7 @@ class Player:
                         self.collect['coin'] += 1
                     else:
                         self.collect[obj.id] = True
-                    map.objects.remove(obj)
+                    self.game.map.objects.remove(obj)
 
     def animation(self):
         # reset animation when stopping
@@ -136,11 +132,9 @@ class Game:
         self.clock = pg.time.Clock()
         self.bgColor = colors.white
 
-        self.player = Player(self)
-
     def victory(self):
         count = 0
-        for obj in map.objects:
+        for obj in self.map.objects:
             if obj.id == "coin":
                 count += 1
         if count == 0:
@@ -178,7 +172,7 @@ class Game:
         if e.key == pg.K_0:
             self.debug = not self.debug
         if e.key == pg.K_r:
-            self.map = TileMap('assets/maps/testmap.csv')
+            self.map = TileMap(self.map_file)
             self.player = Player(colors.white)
         if e.key == pg.K_ESCAPE:
             self.playing = False
@@ -187,9 +181,9 @@ class Game:
         self.screen = pg.Surface(GAME_RESOLUTION)
         self.screen.fill(self.bgColor)
         # map
-        map.draw_map(self.screen)
+        self.map.draw_map(self.screen)
         # objects
-        for obj in map.objects:
+        for obj in self.map.objects:
             obj.draw(self.screen)
         # player
         self.player.move()
@@ -202,13 +196,16 @@ class Game:
         # debug
         if self.debug:
             pg.draw.rect(self.screen, (255, 0, 0), self.player.rect, 1)
-            for obj in map.objects:
+            for obj in self.map.objects:
                 pg.draw.rect(self.screen, (0, 255, 0), obj.rect, 1)
         # scale screen
         self.screen = pg.transform.scale(self.screen, (900, 600))
         self.window.blit(self.screen, (0, 0))
 
-    def inGame(self):
+    def inGame(self,map_file):
+        self.map = TileMap(map_file)
+        self.player = Player(self)
+
         while self.playing:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -238,8 +235,6 @@ class Game:
                 if event.key == pg.K_UP or event.key == pg.K_w:
                     self.UP_KEY = True
 
-
-
     def draw_text(self, text, size, x, y):
         font = pygame.font.Font(self.font_name, size)
         text_surface = font.render(text, True, colors.white)
@@ -249,6 +244,3 @@ class Game:
 
     def reset_keys(self):
         self.UP_KEY, self.DOWN_KEY, self.START_KEY, self.BACK_KEY = False, False, False, False
-
-
-game_main = Game()

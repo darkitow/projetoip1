@@ -1,8 +1,10 @@
 import game_module as gm
 import pygame as pg
 
-while gm.game_main.running:
-    gm.game_main.curr_menu.display_menu()
-    gm.game_main.inGame()
+game_main = gm.Game()
+
+while game_main.running:
+    game_main.curr_menu.display_menu()
+    game_main.inGame('assets/maps/map2.csv')
 
 pg.quit()
