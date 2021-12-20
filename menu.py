@@ -1,16 +1,19 @@
 import pygame
 import sys
 import os
-pygame.mixer.init()
+pygame.mixer.init()#Inicializando a biblioteca da música
 
+#Carregando as imagens de background
 bg_image = pygame.transform.scale(pygame.image.load(
     os.path.join("assets", "background_menu", "Spectre1.png")), (900, 600))
 bg_image_2 = pygame.transform.scale(pygame.image.load(
     os.path.join("assets", "background_menu", "SpectreV.png")), (900, 600))
 
+#Carregando a música
 bg_music = pygame.mixer.Sound(os.path.join("assets", "musicadefundo.mpeg"))
 
-
+#Criando a classe menu que será usada como base para as outras funções,
+#em resumo, começa declarando a música assim que iniciar o menu, depois declara o display e os ângulos do cursor
 class Menu:
     bg_music.play()
 
@@ -20,16 +23,18 @@ class Menu:
         self.run_display = True
         self.cursor_rect = pygame.Rect(0, 0, 130, 130)
         self.offset = - 100
-
+        
+#criando cursor de seleção das opções do menu
     def draw_cursor(self):
         self.game.draw_text('>', 20, self.cursor_rect.x, self.cursor_rect.y)
-
+        
+#Função para tela
     def blit_screen(self):
         self.game.window.blit(self.game.display, (0, 0))
         pygame.display.update()
         self.game.reset_keys()
 
-
+#Classe de menu principal que irá atribuir variáveis
 class MainMenu(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
@@ -42,7 +47,8 @@ class MainMenu(Menu):
 
     def display_menu(self):
         self.run_display = True
-
+        
+#Laço de repetição para mostrar os textos do menu na tela
         while self.run_display:
             self.game.check_events()
             self.check_input()
@@ -56,7 +62,7 @@ class MainMenu(Menu):
             self.draw_cursor()
             self.blit_screen()
 
-
+#Função para organizar o movimento do cursor em cima/baixo
     def move_cursor(self):
         if self.game.DOWN_KEY:
             if self.state == 'Começar':
@@ -85,6 +91,7 @@ class MainMenu(Menu):
                 self.cursor_rect.midtop = (self.tutorialx + self.offset, self.tutorialy)
                 self.state = 'Comandos'
 
+#Função para dar interação aos botões
     def check_input(self):
         self.move_cursor()
         if self.game.START_KEY:
@@ -98,7 +105,7 @@ class MainMenu(Menu):
                 sys.exit()
             self.run_display = False
 
-
+#Função para a opção "comando" ter um sub menu mostrando instruções de controle
 class OptionsMenu(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
@@ -109,7 +116,7 @@ class OptionsMenu(Menu):
         self.direitax, self.direitay = self.mid_w, self.mid_h + 150
         self.troca_corx, self.troca_cory = self.mid_w, self.mid_h + 180
 
-
+#Função para dar vida às variáveis acima e mostrar as instruções
     def display_menu(self):
         self.run_display = True
         while self.run_display:
@@ -128,6 +135,7 @@ class OptionsMenu(Menu):
             self.draw_cursor()
             self.blit_screen()
 
+#Função para fazer voltar do sub menu para o menu
     def check_input(self):
         if self.game.BACK_KEY:
             self.game.curr_menu = self.game.main_menu
@@ -135,11 +143,12 @@ class OptionsMenu(Menu):
         elif self.game.START_KEY:
             pass
 
-
+#Classe de créditos
 class CreditsMenu(Menu):
     def __init__(self, game):
         Menu.__init__(self, game)
 
+#Função para dar vida aos créditos e mostrar na tela em seu sub menu
     def display_menu(self):
         self.run_display = True
         while self.run_display:
