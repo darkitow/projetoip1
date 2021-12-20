@@ -12,7 +12,7 @@ bg_music = pygame.mixer.Sound(os.path.join("assets", "musicadefundo.mpeg"))
 
 
 class Menu:
-    # bg_music.play()
+    bg_music.play()
 
     def __init__(self, game):
         self.game = game

@@ -64,16 +64,16 @@ class Player:
                 return True
         for obj in self.game.map.objects:
             if self.rect.colliderect(obj.rect):
-                if obj.color == self.game.bgColor:
-                    continue
-                if obj.solid:
-                    return True
                 if obj.collectable:
                     if obj.id == 'coin':
                         self.collect['coin'] += 1
                     else:
                         self.collect[obj.id] = True
                     self.game.map.objects.remove(obj)
+                if obj.color == self.game.bgColor:
+                    continue
+                if obj.solid:
+                    return True
 
     def animation(self):
         # reset animation when stopping
@@ -167,13 +167,16 @@ class Game:
             self.bgColor = colors.white
         if e.key == pg.K_2 and self.player.collect['potion1']:
             self.bgColor = hue[1]
+            self.player.collect['potion1'] = False
         if e.key == pg.K_3 and self.player.collect['potion2']:
             self.bgColor = hue[2]
+            self.player.collect['potion2'] = False
         if e.key == pg.K_0:
             self.debug = not self.debug
         if e.key == pg.K_r:
             self.map = TileMap(self.map_file)
-            self.player = Player(colors.white)
+            self.player = Player(self)
+            self.bgColor = colors.white
         if e.key == pg.K_ESCAPE:
             self.playing = False
 
@@ -191,8 +194,8 @@ class Game:
         # overlay
         self.colorOverlay(self.screen)
         # coin text
-        textsurface = myfont.render(f'{self.player.collect["coin"]} Coins', False, (0, 0, 0))
-        self.screen.blit(textsurface, (20, 28))
+        #textsurface = myfont.render(f'{self.player.collect["coin"]} Coins', False, (0, 0, 0))
+        #self.screen.blit(textsurface, (20, 28))
         # debug
         if self.debug:
             pg.draw.rect(self.screen, (255, 0, 0), self.player.rect, 1)
@@ -203,7 +206,8 @@ class Game:
         self.window.blit(self.screen, (0, 0))
 
     def inGame(self,map_file):
-        self.map = TileMap(map_file)
+        self.map_file = map_file
+        self.map = TileMap(self.map_file)
         self.player = Player(self)
 
         while self.playing:
