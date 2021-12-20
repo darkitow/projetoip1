@@ -86,22 +86,22 @@ class TileMap:
                     tiles.append(Tile('assets/tiles/wallbr.png', x * self.tile_size, y * self.tile_size))
                 if tile == '10':
                     objects.append(
-                        Tile('assets/coin.png', x * self.tile_size, y * self.tile_size, collectable=True, id='coin'))
+                        Tile('assets/objetos/coin.png', x * self.tile_size, y * self.tile_size, collectable=True, id='coin'))
                 if tile == '100':
                     objects.append(
-                        Tile('assets/crate.png', x * self.tile_size, y * self.tile_size, solid=True, color_id=0))
+                        Tile('assets/objetos/crate.png', x * self.tile_size, y * self.tile_size, solid=True, color_id=0))
                 # tiles abaixo possuem o atributo color_id para modificar sua cor
                 if tile == '101':
                     objects.append(
-                        Tile('assets/crate.png', x * self.tile_size, y * self.tile_size, solid=True, color_id=1))
+                        Tile('assets/objetos/crate.png', x * self.tile_size, y * self.tile_size, solid=True, color_id=1))
                 if tile == '102':
                     objects.append(
-                        Tile('assets/crate.png', x * self.tile_size, y * self.tile_size, solid=True, color_id=2))
+                        Tile('assets/objetos/crate.png', x * self.tile_size, y * self.tile_size, solid=True, color_id=2))
                 if tile == '201':
-                    objects.append(Tile('assets/potion.png', x * self.tile_size, y * self.tile_size, collectable=True,
+                    objects.append(Tile('assets/objetos/potion.png', x * self.tile_size, y * self.tile_size, collectable=True,
                                         id='potion1', color_id=1))
                 if tile == '202':
-                    objects.append(Tile('assets/potion.png', x * self.tile_size, y * self.tile_size, collectable=True,
+                    objects.append(Tile('assets/objetos/potion.png', x * self.tile_size, y * self.tile_size, collectable=True,
                                         id='potion2', color_id=2))
 
                 x += 1
