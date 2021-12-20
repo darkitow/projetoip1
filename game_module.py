@@ -5,11 +5,14 @@ from tiles import *
 
 debug = False
 
+# iniciando o uso de fontes
 pg.font.init()
 myfont = pg.font.SysFont('Comic Sans MS', 10)
 
+# evento personalizado para verificar se coletou todas as moedas
 WIN = pygame.USEREVENT + 1
 
+# variavel e decionario que seram utilizados para mudar de fase
 atual = 1
 
 levels = {
@@ -25,9 +28,11 @@ class Player:
         self.pos = [self.game.map.start_x, self.game.map.start_y]
         self.vel = [0, 0]
         self.speed = 1
-
+        
+        # itens coletados
         self.collect = {'coin': 0, 'potion1': False, 'potion2': False}
 
+        # sprites para as animações
         self.sprites = {
             'left': [
                 'assets/player/player-left1.png',
@@ -54,28 +59,38 @@ class Player:
                 'assets/player/player-down4.png',
             ],
         }
+        # variaveis realionadas a animação 
         self.loadSprites()
         self.img = self.sprites['right'][0]
         self.aniFrame = 0
 
+        # hitbox e posição
         self.rect = self.img.get_rect()
         self.rect.x, self.rect.y = self.pos
 
+    # transformando os caminhos em sprites em arquivos
     def loadSprites(self):
         for cod, frames in self.sprites.items():
             for i, sprite in enumerate(frames):
                 self.sprites[cod][i] = pg.image.load(sprite).convert_alpha()
 
+    # função relacionada a colisão
     def checkcollision(self):
+        # blocos comuns
         for tile in self.game.map.tiles:
             if self.rect.colliderect(tile.rect):
                 return True
+        
+        # objetos 
         for obj in self.game.map.objects:
             if self.rect.colliderect(obj.rect):
+                # verificando se player passara pelo objeto ou não
                 if obj.color == self.game.bgColor:
                     continue
                 if obj.solid:
                     return True
+                
+                # coletaveis : moedas e poções 
                 if obj.collectable:
                     if obj.id == 'coin':
                         self.collect['coin'] += 1
@@ -83,6 +98,7 @@ class Player:
                         self.collect[obj.id] = True
                     self.game.map.objects.remove(obj)
 
+    # animação 
     def animation(self):
         # reset animation when stopping
         if self.vel == (0, 0):
@@ -104,6 +120,7 @@ class Player:
         if self.aniFrame > 3:
             self.aniFrame = 0
 
+    # função para o movimento 
     def move(self):
         self.pos[0] += self.vel[0]
         self.pos[1] += self.vel[1]
@@ -125,31 +142,36 @@ class Game:
         self.running, self.playing = True, False
         self.debug = False
 
+        # teclas apertadas nos menus 
         self.UP_KEY, self.DOWN_KEY, self.START_KEY, self.BACK_KEY = False, False, False, False
 
+        # variaveis relacionadas ao tamanho e resolução da tela
         self.DISPLAY_W, self.DISPLAY_H = 900, 600
         self.display = pg.Surface((self.DISPLAY_W, self.DISPLAY_H))
         self.window = pg.display.set_mode((self.DISPLAY_W, self.DISPLAY_H))
         self.font_name = pg.font.get_default_font()
 
+        # atribuindo objetos as classes de menu
         self.main_menu = MainMenu(self)
         self.options = OptionsMenu(self)
         self.credits = CreditsMenu(self)
         self.endmenu = EndMenu(self)
-        self.curr_menu = self.main_menu
+        self.curr_menu = self.main_menu  # definindo menu atual 
 
+        # fps e cor de fundo inicial
         self.clock = pg.time.Clock()
         self.bgColor = colors.white
 
-
+    # função que verifica a vitoria
     def victory(self):
         count = 0
         for obj in self.map.objects:
             if obj.id == "coin":
                 count += 1
         if count == 0:
-            pygame.event.post(pygame.event.Event(WIN))
+            pygame.event.post(pygame.event.Event(WIN))  # chamando evento personalizado
 
+    # interface relacionada as cores coletadas
     def colorOverlay(self, surf):
         pg.draw.rect(surf, colors.black, (19, 19, 28, 10), 0)
         pg.draw.rect(surf, colors.white, (20, 20, 8, 8), 0)
@@ -172,6 +194,7 @@ class Game:
         if keys[pg.K_DOWN]:
             self.player.vel = (0, self.player.speed)
 
+    # mudança de cores e teclas especificas 
     def keyPress(self, e):
         if e.key == pg.K_1:
             self.bgColor = colors.white
@@ -213,7 +236,8 @@ class Game:
         self.window.blit(self.screen, (0, 0))
 
 
-    def inGame(self):        
+    def inGame(self):    
+        # definindo objetos mapa e player     
         self.map = TileMap(levels[1])
         self.player = Player(self)
 
@@ -223,6 +247,8 @@ class Game:
                     self.running, self.playing = False, False
                 if event.type == pg.KEYDOWN:
                     self.keyPress(event)
+
+                # mudando fases 
                 if event.type == WIN:
                     global atual
                     atual += 1
@@ -240,6 +266,7 @@ class Game:
             self.clock.tick(60)
             self.victory()
 
+    # checando teclas durante o menu 
     def check_events(self):
         for event in pygame.event.get():
             if event.type == pg.QUIT:
@@ -256,6 +283,7 @@ class Game:
                 if event.key == pg.K_UP or event.key == pg.K_w:
                     self.UP_KEY = True
 
+    # colocando texto na tela 
     def draw_text(self, text, size, x, y):
         font = pygame.font.Font(self.font_name, size)
         text_surface = font.render(text, True, colors.white)

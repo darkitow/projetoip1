@@ -8,10 +8,11 @@ pg.display.set_caption('Spectre')
 icon = pg.image.load('icon.png')
 pg.display.set_icon(icon)
 
+# resolução da tela 
 pg.init()
 window = pg.display.set_mode(WINDOW_RESOLUTION)
 
-
+# função que pinta os sprites 
 def changeColor(image, color):
     colouredImage = pg.Surface(image.get_size())
     colouredImage.fill(color)
@@ -50,6 +51,7 @@ class TileMap:
         self.map_surface.set_colorkey((255, 255, 255))
         self.load_map()
 
+    # lendo o arquivo que o mapa foi feito
     def read_csv(self, filename):
         map = list()
         with open(os.path.join(filename)) as data:
@@ -58,6 +60,7 @@ class TileMap:
                 map.append(list(row))
         return map
 
+    # função que diferencia cada tipo de bloco e adciona nas respectivas listas
     def load_tiles(self, filename):
         tiles = []
         objects = []
@@ -109,9 +112,10 @@ class TileMap:
         self.map_w, self.map_h = x * self.tile_size, y * self.tile_size
         return tiles, objects
 
+    # carregando mapa 
     def load_map(self):
         for tile in self.tiles:
             tile.draw(self.map_surface)
-
+    # desenhando mapa
     def draw_map(self, surface):
         surface.blit(self.map_surface, (0, 0))
