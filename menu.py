@@ -8,10 +8,11 @@ bg_image = pygame.transform.scale(pygame.image.load(
 bg_image_2 = pygame.transform.scale(pygame.image.load(
     os.path.join("assets", "background_menu", "SpectreV.png")), (900, 600))
 
-bg_music = pygame.mixer.Sound(os.path.join("assets","musicas", "musicadefundo.mp3"))
+bg_music = pygame.mixer.music.load(os.path.join("assets","musicas", "musicadefundo.mp3"))
 victory_music = pygame.mixer.Sound(os.path.join("assets","musicas", "musicavitoria.mp3"))
+coin_sound = pygame.mixer.Sound(os.path.join("assets", "musicas", "smw_coin.wav"))
 
-bg_music.play(-1)
+pygame.mixer.music.play(-1)
 
 class Menu:
     def __init__(self, game):

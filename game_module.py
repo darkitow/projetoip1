@@ -1,4 +1,5 @@
 import pygame.event
+from pygame.mixer import Sound
 
 from menu import *
 from tiles import *
@@ -74,6 +75,7 @@ class Player:
             if self.rect.colliderect(obj.rect):
                 if obj.collectable:
                     if obj.id == 'coin':
+                        coin_sound.play()
                         self.collect['coin'] += 1
                     else:
                         self.collect[obj.id] = True
@@ -229,6 +231,7 @@ class Game:
                     global atual
                     atual += 1
                     if atual > 2:
+                        victory_music.play()
                         self.curr_menu = self.endmenu
                         self.playing = False
                     else:
